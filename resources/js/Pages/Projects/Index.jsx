@@ -49,7 +49,7 @@ const getStatusBadge = (status) => {
   }
 };
 
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 
 import { Input } from "@/components/ui/input";
 
@@ -61,25 +61,49 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-
-export default function Index({ projects, queryParams=null }) {
-
+export default function Index({ projects, queryParams = null }) {
   queryParams = queryParams || {};
 
   const searchFieldChanged = (name, value) => {
-    if(value) {
-      queryParams[name] = value;
+    const params = { ...queryParams };
+
+    if (value) {
+      params[name] = value;
     } else {
-      delete queryParams[name];
+      delete params[name];
     }
-  }
+
+    router.get(route("project.index"), params, {
+      preserveState: true,
+      preserveScroll: true,
+      only: ["projects"],
+    });
+  };
 
   const onKeyPress = (e, name) => {
-    if(e.key !== 'Enter') return;
+    if (e.key !== "Enter") return;
 
     searchFieldChanged(name, e.target.value);
-  }
-  
+  };
+
+  const sortChanged = (name) => {
+    if (name === queryParams.sort_field) {
+      if (queryParams.sort_directions === "asc") {
+        queryParams.sort_directions = "desc";
+      } else {
+        queryParams.sort_directions = "asc";
+      }
+    } else {
+      queryParams.sort_field = name;
+      queryParams.sort_directions = "asc";
+    }
+    router.get(route("project.index"), queryParams, {
+      preserveState: true,
+      preserveScroll: true,
+      only: ["projects"],
+    });
+  };
+
   return (
     <AuthenticatedLayout
       header={
@@ -98,14 +122,26 @@ export default function Index({ projects, queryParams=null }) {
                 <TableHeader className="bg-gray-100">
                   <TableRow>
                     <TableHead>Image</TableHead>
-                    <TableHead>Id</TableHead>
-                    <TableHead>Nom</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead>Créé par</TableHead>
-                    <TableHead className="text-nowrap">
+                    <TableHead onClick={(e) => sortChanged("id")}>Id</TableHead>
+                    <TableHead onClick={(e) => sortChanged("name")}>
+                      Nom
+                    </TableHead>
+                    <TableHead onClick={(e) => sortChanged("status")}>
+                      Statut
+                    </TableHead>
+                    <TableHead onClick={(e) => sortChanged("created_by")}>
+                      Créé par
+                    </TableHead>
+                    <TableHead
+                      onClick={(e) => sortChanged("created_at")}
+                      className="text-nowrap"
+                    >
                       Date de création
                     </TableHead>
-                    <TableHead className="text-nowrap">
+                    <TableHead
+                      onClick={(e) => sortChanged("due_date")}
+                      className="text-nowrap"
+                    >
                       Date d'échéance
                     </TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -125,12 +161,18 @@ export default function Index({ projects, queryParams=null }) {
                         onKeyPress={(e) => {
                           onKeyPress(e, "name");
                         }}
+                        defaultValue={queryParams.name}
                       />
                     </TableHead>
                     <TableHead className="text-nowrap py-2">
-                      <Select 
-                      className="w-full"
-                      onChange={(e) => searchFieldChanged("status", e.target.value)}>
+                      <Select
+                        className="w-full"
+                        onValueChange={(value) =>
+                          searchFieldChanged("status", value)
+                        }
+                        defaultValue={queryParams.status}
+                      >
+                        <SelectTrigger>
                           <SelectValue placeholder="Statut" />
                         </SelectTrigger>
                         <SelectContent>
@@ -142,7 +184,7 @@ export default function Index({ projects, queryParams=null }) {
                         </SelectContent>
                       </Select>
                     </TableHead>
-                    <TableHead>Créé par</TableHead>
+                    <TableHead></TableHead>
                     <TableHead className="text-nowrap"></TableHead>
                     <TableHead></TableHead>
                     <TableHead></TableHead>
