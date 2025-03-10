@@ -61,7 +61,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function Index({ projects, queryParams = null }) {
+export default function Index({ task, projects, queryParams = null }) {
   queryParams = queryParams || {};
 
   const searchFieldChanged = (name, value) => {

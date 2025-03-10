@@ -138,7 +138,7 @@ export default function Show({ project, tasks, queryParams }) {
                   </div>
 
                   {/* You can add more content blocks here */}
-                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 overflow-x-auto">
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-semibold">Tasks</h3>
                       <button className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600">

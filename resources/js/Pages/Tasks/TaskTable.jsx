@@ -138,7 +138,7 @@ export default function TaskTable({ tasks, projectId, queryParams = null }) {
                 onClick={() => sortChanged("due_date")}
                 className="cursor-pointer"
               >
-                <div className="flex items-center">
+                <div className="flex items-center text-nowrap">
                   Due Date {renderSortIndicator("due_date")}
                 </div>
               </TableHead>
@@ -146,7 +146,7 @@ export default function TaskTable({ tasks, projectId, queryParams = null }) {
                 onClick={() => sortChanged("assigned_to")}
                 className="cursor-pointer"
               >
-                <div className="flex items-center">
+                <div className="flex items-center text-nowrap">
                   Assigned To {renderSortIndicator("assigned_to")}
                 </div>
               </TableHead>
@@ -191,11 +191,13 @@ export default function TaskTable({ tasks, projectId, queryParams = null }) {
               tasks.data.map((task) => (
                 <TableRow key={task.id}>
                   <TableCell>{task.id}</TableCell>
-                  <TableCell className="font-medium">{task.title}</TableCell>
+                  <TableCell className="font-medium text-nowrap">
+                    {task.name}
+                  </TableCell>
                   <TableCell>{getStatusBadge(task.status)}</TableCell>
                   <TableCell className="text-nowrap">{task.due_date}</TableCell>
                   <TableCell className="text-nowrap">
-                    {task.assigned_to ? task.assigned_to.name : "Unassigned"}
+                    {task.assignedUser ? task.assignedUser.name : "Unassigned"}
                   </TableCell>
                   <TableCell className="text-right">
                     <Link
