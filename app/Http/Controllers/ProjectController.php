@@ -57,7 +57,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $tasksQuery = $project->tasks()->with(['assignedTo']);
+        $tasksQuery = $project->tasks()->with(['assignedUser']);
     
         // Filtres
         if (request("title")) {

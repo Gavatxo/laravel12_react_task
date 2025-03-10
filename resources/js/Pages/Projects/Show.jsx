@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { Badge } from "@/components/ui/badge";
-import TaskTable from "@/Components/Tasks/TaskTable";
+import TaskTable from "../Tasks/TaskTable";
 
 const getStatusBadge = (status) => {
   switch (status) {
@@ -29,7 +29,7 @@ const getStatusBadge = (status) => {
   }
 };
 
-export default function Show({ project }) {
+export default function Show({ project, tasks, queryParams }) {
   return (
     <AuthenticatedLayout
       header={
@@ -139,11 +139,24 @@ export default function Show({ project }) {
 
                   {/* You can add more content blocks here */}
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-4">Tasks</h3>
-                    <p className="text-gray-500 italic">
-                      No tasks available for this project.
-                    </p>
-                    {/* Will be replaced by actual tasks when available */}
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold">Tasks</h3>
+                      <button className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Add Task
+                      </button>
+                    </div>
+
+                    {tasks ? (
+                      <TaskTable
+                        tasks={tasks}
+                        projectId={project.id}
+                        queryParams={queryParams}
+                      />
+                    ) : (
+                      <p className="text-gray-500 italic p-4 text-center">
+                        No tasks available for this project.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
