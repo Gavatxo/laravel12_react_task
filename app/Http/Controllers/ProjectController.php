@@ -17,7 +17,7 @@ class ProjectController extends Controller
         $query = Project::query();
 
         $sortFields = request("sort_field", 'created_at');
-        $sortDirection = request("sort_directions", 'desc');
+        $sortDirection = request("sort_direction", 'desc');
 
         if (request("name")) {
             $query->where('name', 'like', '%' . request("name") . '%');
@@ -56,7 +56,9 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return inertia('Projects/Show', [
+            'project' => new ProjectResource($project),
+        ]);
     }
 
     /**

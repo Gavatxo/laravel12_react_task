@@ -73,7 +73,7 @@ export default function Index({ projects, queryParams = null }) {
       delete params[name];
     }
 
-    router.get(route("project.index"), params, {
+    router.get(route("task.index"), params, {
       preserveState: true,
       preserveScroll: true,
       only: ["projects"],
@@ -97,7 +97,7 @@ export default function Index({ projects, queryParams = null }) {
       queryParams.sort_field = name;
       queryParams.sort_direction = "asc";
     }
-    router.get(route("project.index"), queryParams, {
+    router.get(route("task.index"), queryParams, {
       preserveState: true,
       preserveScroll: true,
       only: ["projects"],
@@ -118,15 +118,15 @@ export default function Index({ projects, queryParams = null }) {
     <AuthenticatedLayout
       header={
         <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-          Projects
+          Tasks
         </h2>
       }
     >
-      <Head title="Projects" />
+      <Head title="Tasks" />
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-            <h1 className="text-2xl font-bold mb-4">Projects</h1>
+            <h1 className="text-2xl font-bold mb-4">Tasks</h1>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-gray-100">
@@ -221,45 +221,41 @@ export default function Index({ projects, queryParams = null }) {
                 </TableHeader>
                 <TableBody>
                   {projects.data &&
-                    projects.data.map((project) => (
-                      <TableRow key={project.id}>
+                    projects.data.map((task) => (
+                      <TableRow key={task.id}>
                         <TableCell className="font-medium">
                           <img
-                            src={project.image_path}
+                            src={task.image_path}
                             className="w-20 h-20 rounded-full"
                           />
                         </TableCell>
-                        <TableCell className="font-medium">
-                          {project.id}
-                        </TableCell>
-                        <TableCell className="font-medium text-nowrap hover:underline">
-                          <Link href={route("project.show", project.id)}>
-                            {project.name}
-                          </Link>
+                        <TableCell className="font-medium">{task.id}</TableCell>
+                        <TableCell className="font-medium text-nowrap">
+                          {task.name}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={getStatusBadge(project.status)}>
-                            {project.status}
+                          <Badge variant={getStatusBadge(task.status)}>
+                            {task.status}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-nowrap">
-                          {project.created_by.name}
+                          {task.created_by.name}
                         </TableCell>
                         <TableCell className="text-nowrap">
-                          {project.created_at}
+                          {task.created_at}
                         </TableCell>
                         <TableCell className="text-nowrap">
-                          {project.due_date}
+                          {task.due_date}
                         </TableCell>
                         <TableCell>
                           <Link
-                            href={route("project.edit", project.id)}
+                            href={route("task.edit", task.id)}
                             className="text-blue-500 hover:underline mr-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md"
                           >
                             Edit
                           </Link>
                           <Link
-                            href={route("project.destroy", project.id)}
+                            href={route("task.destroy", task.id)}
                             className="text-red-500 hover:underline mr-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md"
                           >
                             Delete
