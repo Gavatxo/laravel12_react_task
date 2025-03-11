@@ -61,7 +61,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function Index({ task, projects, queryParams = null }) {
+export default function Index({ tasks, projects, queryParams = null }) {
   queryParams = queryParams || {};
 
   const searchFieldChanged = (name, value) => {
@@ -132,6 +132,9 @@ export default function Index({ task, projects, queryParams = null }) {
                 <TableHeader className="bg-gray-100">
                   <TableRow>
                     <TableHead>Image</TableHead>
+                    <TableHead className="cursor-pointer text-nowrap">
+                      Project Name
+                    </TableHead>
                     <TableHead onClick={(e) => sortChanged("id")}>Id</TableHead>
                     <TableHead
                       onClick={(e) => sortChanged("name")}
@@ -179,10 +182,22 @@ export default function Index({ task, projects, queryParams = null }) {
                 <TableHeader className="bg-gray-100">
                   <TableRow>
                     <TableHead></TableHead>
+                    <TableHead>
+                      <Input
+                        placeholder="Name project"
+                        className="w-full"
+                        onBlur={(e) =>
+                          searchFieldChanged("name", e.target.value)
+                        }
+                        onKeyPress={(e) => {
+                          onKeyPress(e, "name");
+                        }}
+                      />
+                    </TableHead>
                     <TableHead></TableHead>
                     <TableHead>
                       <Input
-                        placeholder="Nom du projet"
+                        placeholder="Name task"
                         className="w-full"
                         onBlur={(e) =>
                           searchFieldChanged("name", e.target.value)
@@ -228,6 +243,9 @@ export default function Index({ task, projects, queryParams = null }) {
                             src={task.image_path}
                             className="w-20 h-20 rounded-full"
                           />
+                        </TableCell>
+                        <TableCell className="font-medium text-nowrap">
+                          {task.project.name}
                         </TableCell>
                         <TableCell className="font-medium">{task.id}</TableCell>
                         <TableCell className="font-medium text-nowrap">
