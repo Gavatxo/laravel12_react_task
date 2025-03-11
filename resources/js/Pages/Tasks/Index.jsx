@@ -100,7 +100,7 @@ export default function Index({ tasks, projects, queryParams = null }) {
     router.get(route("task.index"), queryParams, {
       preserveState: true,
       preserveScroll: true,
-      only: ["projects"],
+      only: ["tasks"],
     });
   };
 
