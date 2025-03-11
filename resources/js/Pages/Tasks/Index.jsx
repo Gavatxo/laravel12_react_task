@@ -132,8 +132,13 @@ export default function Index({ tasks, projects, queryParams = null }) {
                 <TableHeader className="bg-gray-100">
                   <TableRow>
                     <TableHead>Image</TableHead>
-                    <TableHead className="cursor-pointer text-nowrap">
-                      Project Name
+                    <TableHead
+                      onClick={(e) => sortChanged("project.name")}
+                      className="text-nowrap"
+                    >
+                      <div className="flex items-center">
+                        Project Name {renderSortIndicator("project.name")}
+                      </div>
                     </TableHead>
                     <TableHead onClick={(e) => sortChanged("id")}>Id</TableHead>
                     <TableHead
@@ -182,18 +187,7 @@ export default function Index({ tasks, projects, queryParams = null }) {
                 <TableHeader className="bg-gray-100">
                   <TableRow>
                     <TableHead></TableHead>
-                    <TableHead>
-                      <Input
-                        placeholder="Name project"
-                        className="w-full"
-                        onBlur={(e) =>
-                          searchFieldChanged("name", e.target.value)
-                        }
-                        onKeyPress={(e) => {
-                          onKeyPress(e, "name");
-                        }}
-                      />
-                    </TableHead>
+                    <TableHead></TableHead>
                     <TableHead></TableHead>
                     <TableHead>
                       <Input
