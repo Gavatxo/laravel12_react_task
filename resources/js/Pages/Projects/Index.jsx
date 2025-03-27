@@ -2,6 +2,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 import { toast, Toaster } from "react-hot-toast";
 
+import { Pencil, Trash2 } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -199,7 +201,7 @@ export default function Index({ projects, queryParams = null, flash }) {
                         Due date {renderSortIndicator("name")}
                       </div>
                     </TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="text-left">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableHeader className="bg-gray-100">
@@ -278,18 +280,20 @@ export default function Index({ projects, queryParams = null, flash }) {
                           {project.due_date}
                         </TableCell>
                         <TableCell>
-                          <Link
-                            href={route("project.edit", project.id)}
-                            className="text-blue-500 hover:underline mr-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md"
-                          >
-                            Edit
-                          </Link>
-                          <Button
-                            onClick={(e) => deleteProject(project)}
-                            className="text-red-500 hover:underline mr-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md"
-                          >
-                            Delete
-                          </Button>
+                          <div className="flex space-x-3 justify-end">
+                            <Link
+                              href={route("project.edit", project.id)}
+                              className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-colors duration-200"
+                            >
+                              <Pencil size={16} />
+                            </Link>
+                            <button
+                              onClick={(e) => deleteProject(project)}
+                              className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

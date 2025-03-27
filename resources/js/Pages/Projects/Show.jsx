@@ -168,9 +168,12 @@ export default function Show({ project, tasks, queryParams }) {
                 <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
                   Back to Projects
                 </button>
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                <Link
+                  href={route("project.edit", project.id)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
                   Edit Project
-                </button>
+                </Link>
               </div>
             </div>
           </div>

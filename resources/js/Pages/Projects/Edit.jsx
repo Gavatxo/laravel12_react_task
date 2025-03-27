@@ -94,14 +94,22 @@ export default function Create({ project }) {
 
     submitData.append("_method", "PUT");
 
-    Object.keys(formData).forEach((key) => {
-      if (key === "due_date" && formData[key] instanceof Date) {
-        submitData.append(key, format(formData[key], "yyyy-MM-dd"));
-      } else if (formData[key] !== null) {
-        submitData.append(key, formData[key]);
-      }
-    });
+    // Gérer chaque champ individuellement pour éviter d'ajouter image incorrectement
+    if (formData.name) submitData.append("name", formData.name);
+    if (formData.description !== null)
+      submitData.append("description", formData.description);
+    if (formData.status) submitData.append("status", formData.status);
 
+    // Traitement spécial pour la date
+    if (formData.due_date) {
+      if (formData.due_date instanceof Date) {
+        submitData.append("due_date", format(formData.due_date, "yyyy-MM-dd"));
+      } else {
+        submitData.append("due_date", formData.due_date);
+      }
+    }
+
+    // Traitement spécial pour l'image
     if (formData.image instanceof File) {
       // Si c'est un objet File (nouvelle image), l'ajouter au FormData
       submitData.append("image", formData.image);
@@ -110,11 +118,11 @@ export default function Create({ project }) {
     else if (formData.image === null && project.image_path) {
       submitData.append("remove_image", true);
     }
+    // NE PAS ajouter le champ image si ce n'est pas un fichier
 
     router.post(route("project.update", project.id), submitData, {
       forceFormData: true,
       onSuccess: () => {
-        // Redirect to projects list on success
         router.visit(route("project.index"));
       },
       onError: (errors) => {
