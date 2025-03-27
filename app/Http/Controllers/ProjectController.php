@@ -53,23 +53,18 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
          // Création d'un nouveau projet
-    $project = new Project();
-    $project->name = $request->name;
-    $project->description = $request->description;
-    $project->due_date = $request->due_date;
-    $project->status = $request->status;
-
-    $data = $request->validated();
-
-    $image = $data['image'] ?? null;
-
-    $data['created_by'] = Auth::id();
-    $data['updated_by'] = Auth::id();
+         $data = $request->validated();
     
-    // Traitement de l'image si elle existe
-    if ($image) {
-        $data['image_path'] = $image->store('project/' . Str::random(), 'public');
-    }
+         // Ajout des informations utilisateur
+         $data['created_by'] = Auth::id();
+         $data['updated_by'] = Auth::id();
+         
+         // Traitement de l'image si elle existe
+         if ($request->hasFile('image')) {
+             // On stocke dans un dossier organisé par année/mois 
+             $path = $request->file('image')->store('projects', 'public');
+             $data['image_path'] = $path;
+         }
 
 
     
@@ -132,6 +127,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+
+        return to_route('project.index')
+            ->with('success', 'Project deleted successfully');
     }
 }

@@ -61,6 +61,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Button } from "@/components/ui/button";
+
 export default function Index({ projects, queryParams = null }) {
   queryParams = queryParams || {};
 
@@ -112,6 +114,13 @@ export default function Index({ projects, queryParams = null }) {
         {queryParams.sort_direction === "asc" ? "↑" : "↓"}
       </span>
     );
+  };
+
+  const deleteProject = (project) => {
+    if (!window.confirm("Are you sure you want to delete this project?")) {
+      return;
+    }
+    router.delete(route("project.destroy", project.id));
   };
 
   return (
@@ -266,12 +275,12 @@ export default function Index({ projects, queryParams = null }) {
                           >
                             Edit
                           </Link>
-                          <Link
-                            href={route("project.destroy", project.id)}
+                          <Button
+                            onClick={(e) => deleteProject(project)}
                             className="text-red-500 hover:underline mr-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md"
                           >
                             Delete
-                          </Link>
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
