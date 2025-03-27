@@ -1,5 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
+import { toast, Toaster } from "react-hot-toast";
+
 import {
   Table,
   TableBody,
@@ -62,8 +64,14 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
+import { use, useEffect } from "react";
 
-export default function Index({ projects, queryParams = null }) {
+export default function Index({ projects, queryParams = null, flash }) {
+  useEffect(() => {
+    if (flash && flash.success) {
+      toast.success(flash.success);
+    }
+  }, [flash]);
   queryParams = queryParams || {};
 
   const searchFieldChanged = (name, value) => {
@@ -140,6 +148,7 @@ export default function Index({ projects, queryParams = null }) {
       }
     >
       <Head title="Projects" />
+      <Toaster position="top-center" />
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
