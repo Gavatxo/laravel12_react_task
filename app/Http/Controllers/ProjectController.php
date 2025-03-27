@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use App\Http\Resources\TaskResource;
-use App\Http\Resources\ProjectResource;
-use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\UpdateProjectRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Resources\TaskResource;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\ProjectResource;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 
 class ProjectController extends Controller
 {
@@ -126,6 +127,10 @@ class ProjectController extends Controller
         $data['updated_by'] = Auth::id();
 
         if ($request->hasFile('image')) {
+
+            if ($project->image_path && Storage::disk('public')->exists($project->image_path)) {
+                Storage::disk('public')->delete($project->image_path);
+            }
 
             $path = $request->file('image')->store('projects', 'public');
             $data['image_path'] = $path;

@@ -91,15 +91,27 @@ export default function Create({ project }) {
 
     // Create FormData object for file upload
     const submitData = new FormData();
+
+    submitData.append("_method", "PUT");
+
     Object.keys(formData).forEach((key) => {
       if (key === "due_date" && formData[key] instanceof Date) {
         submitData.append(key, format(formData[key], "yyyy-MM-dd"));
-      } else {
+      } else if (formData[key] !== null) {
         submitData.append(key, formData[key]);
       }
     });
 
-    router.post(route("project.store"), submitData, {
+    if (formData.image instanceof File) {
+      // Si c'est un objet File (nouvelle image), l'ajouter au FormData
+      submitData.append("image", formData.image);
+    }
+    // Si l'image a été supprimée, vous pouvez ajouter un indicateur
+    else if (formData.image === null && project.image_path) {
+      submitData.append("remove_image", true);
+    }
+
+    router.post(route("project.update", project.id), submitData, {
       forceFormData: true,
       onSuccess: () => {
         // Redirect to projects list on success
