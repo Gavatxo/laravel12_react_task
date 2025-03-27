@@ -31,7 +31,8 @@ export default function Create({ project }) {
     image_path: project?.image_path,
   });
   const [errors, setErrors] = useState({});
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState(project?.image_path || null);
+
   const fileInputRef = useRef(null);
 
   const handleInputChange = (e) => {
@@ -173,7 +174,9 @@ export default function Create({ project }) {
                   {imagePreview ? (
                     <div className="relative">
                       <img
-                        src={project.image_path}
+                        src={
+                          imagePreview || "/images/default-project-image.png"
+                        }
                         alt="Preview"
                         className="object-cover rounded-md"
                       />
