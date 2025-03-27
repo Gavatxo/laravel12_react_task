@@ -178,7 +178,7 @@ export default function Index({ projects, queryParams = null }) {
                       className="text-nowrap cursor-pointer"
                     >
                       <div className="flex items-center">
-                        Date {renderSortIndicator("name")}
+                        Due date {renderSortIndicator("name")}
                       </div>
                     </TableHead>
                     <TableHead className="text-right">Actions</TableHead>

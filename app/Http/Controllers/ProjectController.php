@@ -7,6 +7,9 @@ use App\Http\Resources\TaskResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
@@ -49,7 +52,33 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+         // Création d'un nouveau projet
+    $project = new Project();
+    $project->name = $request->name;
+    $project->description = $request->description;
+    $project->due_date = $request->due_date;
+    $project->status = $request->status;
+
+    $data = $request->validated();
+
+    $image = $data['image'] ?? null;
+
+    $data['created_by'] = Auth::id();
+    $data['updated_by'] = Auth::id();
+    
+    // Traitement de l'image si elle existe
+    if ($image) {
+        $data['image_path'] = $image->store('project/' . Str::random(), 'public');
+    }
+
+
+    
+    // Enregistrement du projet
+    Project::create($data);
+    
+    // Redirection avec message de succès
+    return redirect()->route('project.index')
+        ->with('success', 'Project created successfully');
     }
 
     /**
