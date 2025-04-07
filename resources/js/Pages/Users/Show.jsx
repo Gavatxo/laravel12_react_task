@@ -30,68 +30,66 @@ const getStatusBadge = (status) => {
   }
 };
 
-export default function Show({ project, tasks, queryParams }) {
+export default function Show({ user, tasks, queryParams }) {
   return (
     <AuthenticatedLayout
       header={
         <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-          Project Details
+          User Details
         </h2>
       }
     >
-      <Head title={project.name} />
+      <Head title={user.name} />
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             {/* Hero section with image */}
             <div className="relative h-64 bg-gray-200">
               <img
-                src={project.image_path}
-                alt={project.name}
+                src={user.image_path}
+                alt={user.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src =
-                    "https://via.placeholder.com/1200x400.png/f0f0f0?text=Project+Image";
+                    "https://via.placeholder.com/1200x400.png/f0f0f0?text=User+Image";
                 }}
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                <h1 className="text-3xl font-bold text-white">
-                  {project.name}
-                </h1>
-                <div className="mt-2">{getStatusBadge(project.status)}</div>
+                <h1 className="text-3xl font-bold text-white">{user.name}</h1>
+                <div className="mt-2">{getStatusBadge(user.status)}</div>
               </div>
             </div>
 
-            {/* Project details */}
+            {/* User details */}
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Left section - Project metadata */}
+                {/* Left section - User metadata */}
                 <div className="space-y-6">
                   <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                    <h3 className="text-lg font-semibold mb-4">Project Info</h3>
+                    <h3 className="text-lg font-semibold mb-4">User Info</h3>
 
                     <div className="space-y-3">
                       <div>
-                        <p className="text-sm text-gray-500">Project ID</p>
-                        <p className="font-medium">{project.id}</p>
+                        <p className="text-sm text-gray-500">User ID</p>
+                        <p className="font-medium">{user.id}</p>
                       </div>
 
                       <div>
                         <p className="text-sm text-gray-500">Status</p>
                         <div className="mt-1">
-                          {getStatusBadge(project.status)}
+                          {getStatusBadge(user.status)}
                         </div>
                       </div>
 
                       <div>
                         <p className="text-sm text-gray-500">Due Date</p>
-                        <p className="font-medium">{project.due_date}</p>
+                        <p className="font-medium">{user.due_date}</p>
                       </div>
 
                       <div>
                         <p className="text-sm text-gray-500">Created At</p>
-                        <p className="font-medium">{project.created_at}</p>
+                        <p className="font-medium">{user.created_at}</p>
                       </div>
                     </div>
                   </div>
@@ -104,23 +102,23 @@ export default function Show({ project, tasks, queryParams }) {
                         <p className="text-sm text-gray-500">Created By</p>
                         <div className="flex items-center mt-1">
                           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                            {project.created_by.name.charAt(0)}
+                            {user.created_by.name.charAt(0)}
                           </div>
                           <span className="ml-2 font-medium">
-                            {project.created_by.name}
+                            {user.created_by.name}
                           </span>
                         </div>
                       </div>
 
-                      {project.updated_by && (
+                      {user.updated_by && (
                         <div>
                           <p className="text-sm text-gray-500">Updated By</p>
                           <div className="flex items-center mt-1">
                             <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white">
-                              {project.updated_by.name.charAt(0)}
+                              {user.updated_by.name.charAt(0)}
                             </div>
                             <span className="ml-2 font-medium">
-                              {project.updated_by.name}
+                              {user.updated_by.name}
                             </span>
                           </div>
                         </div>
@@ -134,7 +132,7 @@ export default function Show({ project, tasks, queryParams }) {
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
                     <h3 className="text-lg font-semibold mb-4">Description</h3>
                     <p className="text-gray-700 whitespace-pre-line">
-                      {project.description}
+                      {user.description}
                     </p>
                   </div>
 
@@ -150,12 +148,12 @@ export default function Show({ project, tasks, queryParams }) {
                     {tasks ? (
                       <TaskTable
                         tasks={tasks}
-                        projectId={project.id}
+                        userId={user.id}
                         queryParams={queryParams}
                       />
                     ) : (
                       <p className="text-gray-500 italic p-4 text-center">
-                        No tasks available for this project.
+                        No tasks available for this user.
                       </p>
                     )}
                   </div>
@@ -167,16 +165,16 @@ export default function Show({ project, tasks, queryParams }) {
             <div className="border-t border-gray-200 p-6 bg-gray-50">
               <div className="flex justify-end space-x-4">
                 <Link
-                  href={route("project.index")}
+                  href={route("user.index")}
                   className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
                 >
-                  Back to Projects
+                  Back to Users
                 </Link>
                 <Link
-                  href={route("project.edit", project.id)}
+                  href={route("user.edit", user.id)}
                   className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                 >
-                  Edit Project
+                  Edit User
                 </Link>
               </div>
             </div>
