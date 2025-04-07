@@ -22,14 +22,21 @@ class UserController extends Controller
         if (request("name")) {
             $query->where('name', 'like', '%' . request("name") . '%');
         }
-        if (request("status")) {
-            $query->where('status', request("status"));
+        if (request("email")) {
+            $query->where('email', 'like', '%' . request("email") . '%');
         }
 
-        
+        if (request("name")) {
+            $query->where('name', 'like', '%' . request("name") . '%');
+        }
+
+        if (request("sort_field") === 'created_at') {
+            $query->orderBy('created_at', request("sort_direction", 'desc'));
+        }
+                
         $users = $query->orderBy($sortFields, $sortDirection)->paginate(10);
 
-        return inertia('Projects/Index', [
+        return inertia('Users/Index', [
             'users' => UserResource::collection($users),
             'queryParams' => request()->query() ?: null,
         ]);

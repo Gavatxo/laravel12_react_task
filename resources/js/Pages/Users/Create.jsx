@@ -4,13 +4,6 @@ import { Head, Link, router } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -18,15 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { format } from "date-fns";
-import { CalendarIcon, ImageIcon, X } from "lucide-react";
+import { ImageIcon, X } from "lucide-react";
 
 export default function Create() {
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
-    due_date: null,
-    status: "pending",
+    email: "",
+    password: "",
+    password_confirmation: "",
+    role: "user", // Vous pouvez avoir différents rôles comme 'admin', 'user', etc.
     image: null,
   });
   const [errors, setErrors] = useState({});
@@ -77,22 +70,13 @@ export default function Create() {
     }));
   };
 
-  const handleDateSelect = (date) => {
-    setFormData((prev) => ({
-      ...prev,
-      due_date: date,
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Create FormData object for file upload
     const submitData = new FormData();
     Object.keys(formData).forEach((key) => {
-      if (key === "due_date" && formData[key] instanceof Date) {
-        submitData.append(key, format(formData[key], "yyyy-MM-dd"));
-      } else {
+      if (formData[key] !== null) {
         submitData.append(key, formData[key]);
       }
     });
@@ -132,14 +116,14 @@ export default function Create() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="name">
-                  User Name <span className="text-red-500">*</span>
+                  Full Name <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Enter user name"
+                  placeholder="Enter user's full name"
                   className={errors.name ? "border-red-500" : ""}
                 />
                 {errors.name && (
@@ -148,30 +132,99 @@ export default function Create() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
+                <Label htmlFor="email">
+                  Email Address <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="Describe your user"
-                  className={errors.description ? "border-red-500" : ""}
-                  rows={4}
+                  placeholder="user@example.com"
+                  className={errors.email ? "border-red-500" : ""}
                 />
-                {errors.description && (
-                  <p className="text-sm text-red-500">{errors.description}</p>
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email}</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="password">
+                    Password <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Enter password"
+                    className={errors.password ? "border-red-500" : ""}
+                  />
+                  {errors.password && (
+                    <p className="text-sm text-red-500">{errors.password}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password_confirmation">
+                    Confirm Password <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    type="password"
+                    value={formData.password_confirmation}
+                    onChange={handleInputChange}
+                    placeholder="Confirm password"
+                    className={
+                      errors.password_confirmation ? "border-red-500" : ""
+                    }
+                  />
+                  {errors.password_confirmation && (
+                    <p className="text-sm text-red-500">
+                      {errors.password_confirmation}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="role">
+                  User Role <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value) => handleSelectChange("role", value)}
+                >
+                  <SelectTrigger
+                    id="role"
+                    className={errors.role ? "border-red-500" : ""}
+                  >
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Administrator</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="user">Regular User</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.role && (
+                  <p className="text-sm text-red-500">{errors.role}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">User Image</Label>
+                <Label htmlFor="image">Profile Image</Label>
                 <div className="mt-1 flex items-center">
                   {imagePreview ? (
                     <div className="relative">
                       <img
                         src={imagePreview}
                         alt="Preview"
-                        className="object-cover rounded-md"
+                        className="h-32 w-32 object-cover rounded-full"
                       />
                       <button
                         type="button"
@@ -184,7 +237,7 @@ export default function Create() {
                   ) : (
                     <div
                       onClick={() => fileInputRef.current.click()}
-                      className="h-32 w-32 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center cursor-pointer bg-gray-50 hover:bg-gray-100"
+                      className="h-32 w-32 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center cursor-pointer bg-gray-50 hover:bg-gray-100"
                     >
                       <ImageIcon className="h-12 w-12 text-gray-400" />
                     </div>
@@ -214,71 +267,6 @@ export default function Create() {
                 {errors.image && (
                   <p className="text-sm text-red-500">{errors.image}</p>
                 )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="due_date">
-                    Due Date <span className="text-red-500">*</span>
-                  </Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id="due_date"
-                        variant="outline"
-                        className={`w-full justify-start text-left font-normal ${
-                          !formData.due_date && "text-gray-400"
-                        } ${errors.due_date ? "border-red-500" : ""}`}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {formData.due_date ? (
-                          format(formData.due_date, "PPP")
-                        ) : (
-                          <span>Select a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={formData.due_date}
-                        onSelect={handleDateSelect}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  {errors.due_date && (
-                    <p className="text-sm text-red-500">{errors.due_date}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">
-                    Status <span className="text-red-500">*</span>
-                  </Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) =>
-                      handleSelectChange("status", value)
-                    }
-                  >
-                    <SelectTrigger
-                      id="status"
-                      className={errors.status ? "border-red-500" : ""}
-                    >
-                      <SelectValue placeholder="Select a status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="canceled">Canceled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.status && (
-                    <p className="text-sm text-red-500">{errors.status}</p>
-                  )}
-                </div>
               </div>
 
               <div className="flex justify-end space-x-3 pt-4">

@@ -176,13 +176,24 @@ export default function Index({ users, queryParams = null, flash }) {
                         Email {renderSortIndicator("email")}
                       </div>
                     </TableHead>
+                    <TableHead
+                      onClick={(e) => sortChanged("created_at")}
+                      className="cursor-pointer text-nowrap"
+                    >
+                      <div className="flex items-center">
+                        Created At {renderSortIndicator("created_at")}
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-center">Actions</TableHead>{" "}
+                    {/* Ajout de l'en-tête pour les actions */}
                   </TableRow>
                 </TableHeader>
                 <TableHeader className="bg-gray-100">
                   <TableRow>
+                    <TableHead></TableHead> {/* Cellule vide pour l'ID */}
                     <TableHead>
                       <Input
-                        placeholder="user name"
+                        placeholder="Search by name"
                         className="w-full"
                         onBlur={(e) =>
                           searchFieldChanged("name", e.target.value)
@@ -193,8 +204,19 @@ export default function Index({ users, queryParams = null, flash }) {
                         defaultValue={queryParams.name}
                       />
                     </TableHead>
-                    <TableHead></TableHead>
-                    <TableHead className="text-nowrap"></TableHead>
+                    <TableHead>
+                      <Input
+                        placeholder="Search by email"
+                        className="w-full"
+                        onBlur={(e) =>
+                          searchFieldChanged("email", e.target.value)
+                        }
+                        onKeyPress={(e) => {
+                          onKeyPress(e, "email");
+                        }}
+                        defaultValue={queryParams.email}
+                      />
+                    </TableHead>
                     <TableHead></TableHead>
                     <TableHead></TableHead>
                   </TableRow>
@@ -209,10 +231,11 @@ export default function Index({ users, queryParams = null, flash }) {
                             {user.name}
                           </Link>
                         </TableCell>
-                        <TableCell>
-                          <Badge variant={getStatusBadge(user.email)}>
-                            {user.email}
-                          </Badge>
+                        <TableCell className="text-gray-600 text-nowrap">
+                          {user.email}
+                        </TableCell>
+                        <TableCell className="text-gray-600 text-nowrap">
+                          {user.created_at}
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-3 justify-end">
