@@ -57,9 +57,9 @@ class UserController extends Controller
     {
         // Création d'un nouvel utilisateur
         $data = $request->validated();
-
-        // Ajout des informations utilisateur
-        $data['created_by'] = Auth::id();
+        $data['password'] = bcrypt($data['password']); // Hashage du mot de passe
+        $data['email_verified_at'] = now(); // Vérification de l'email
+        $data['remember_token'] = null; // Token de rappel
 
         // Enregistrement de l'utilisateur
         User::create($data);
@@ -72,7 +72,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return inertia('Users/Show', [
+            'user' => new UserResource($user),
+        ]);
     }
 
     /**
@@ -80,7 +82,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return inertia('Users/Edit', [
+            'user' => new UserResource($user),
+        ]);
     }
 
     /**
@@ -88,7 +92,13 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        // Validation des données
+        $data = $request->validated();
+
+        // Mise à jour de l'utilisateur
+        $user->update($data);
+
+        return redirect()->route('user.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -96,6 +106,9 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        // Suppression de l'utilisateur
+        $user->delete();
+
+        return redirect()->route('user.index')->with('success', 'User deleted successfully.');
     }
 }

@@ -13,10 +13,10 @@ import {
 } from "@/components/ui/select";
 import { ImageIcon, Eye, EyeOff, X } from "lucide-react";
 
-const [showPassword, setShowPassword] = useState(false);
-const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
 export default function Create() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",

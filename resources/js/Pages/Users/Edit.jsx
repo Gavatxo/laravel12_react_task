@@ -4,36 +4,20 @@ import { Head, Link, router } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { format } from "date-fns";
-import { CalendarIcon, ImageIcon, X } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
-export default function Create({ user }) {
+export default function Edit({ user }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     name: user?.name || "",
-    description: user?.description,
-    due_date: user?.due_date,
-    status: user?.status,
-    image: user?.image_path,
-    image_path: user?.image_path,
+    email: user?.email || "",
+    password: "",
+    password_confirmation: "",
   });
-  const [errors, setErrors] = useState({});
-  const [imagePreview, setImagePreview] = useState(user?.image_path || null);
 
-  const fileInputRef = useRef(null);
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,82 +27,25 @@ export default function Create({ user }) {
     }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        image: file,
-      }));
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const removeImage = () => {
-    setFormData((prev) => ({
-      ...prev,
-      image: null,
-    }));
-    setImagePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleSelectChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleDateSelect = (date) => {
-    setFormData((prev) => ({
-      ...prev,
-      due_date: date,
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Create FormData object for file upload
+    // Create FormData object for update
     const submitData = new FormData();
-
     submitData.append("_method", "PUT");
 
-    // Gérer chaque champ individuellement pour éviter d'ajouter image incorrectement
+    // Add basic user data
     if (formData.name) submitData.append("name", formData.name);
-    if (formData.description !== null)
-      submitData.append("description", formData.description);
-    if (formData.status) submitData.append("status", formData.status);
+    if (formData.email) submitData.append("email", formData.email);
 
-    // Traitement spécial pour la date
-    if (formData.due_date) {
-      if (formData.due_date instanceof Date) {
-        submitData.append("due_date", format(formData.due_date, "yyyy-MM-dd"));
-      } else {
-        submitData.append("due_date", formData.due_date);
-      }
+    // Only include password if it was entered
+    if (formData.password) {
+      submitData.append("password", formData.password);
+      submitData.append(
+        "password_confirmation",
+        formData.password_confirmation
+      );
     }
-
-    // Traitement spécial pour l'image
-    if (formData.image instanceof File) {
-      // Si c'est un objet File (nouvelle image), l'ajouter au FormData
-      submitData.append("image", formData.image);
-    }
-    // Si l'image a été supprimée, vous pouvez ajouter un indicateur
-    else if (formData.image === null && user.image_path) {
-      submitData.append("remove_image", true);
-    }
-    // NE PAS ajouter le champ image si ce n'est pas un fichier
 
     router.post(route("user.update", user.id), submitData, {
       forceFormData: true,
@@ -137,7 +64,9 @@ export default function Create({ user }) {
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
             Edit User
-            <h2 className="font-weight-normal text-gray-500">{user?.name}</h2>
+            <div className="text-base font-normal text-gray-500">
+              {user?.name}
+            </div>
           </h2>
           <Link
             href={route("user.index")}
@@ -155,14 +84,14 @@ export default function Create({ user }) {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="name">
-                  User Name <span className="text-red-500">*</span>
+                  Full Name <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Enter user name"
+                  placeholder="Enter user's full name"
                   className={errors.name ? "border-red-500" : ""}
                 />
                 {errors.name && (
@@ -171,152 +100,111 @@ export default function Create({ user }) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
+                <Label htmlFor="email">
+                  Email Address <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="Describe your user"
-                  className={errors.description ? "border-red-500" : ""}
-                  rows={4}
+                  placeholder="user@example.com"
+                  className={errors.email ? "border-red-500" : ""}
                 />
-                {errors.description && (
-                  <p className="text-sm text-red-500">{errors.description}</p>
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email}</p>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="image">User Image</Label>
-                <div className="mt-1 flex items-center">
-                  {imagePreview ? (
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <p className="text-sm text-gray-500 mb-4">
+                  Leave password fields empty if you don't want to change the
+                  password.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="password">New Password</Label>
                     <div className="relative">
-                      <img
-                        src={imagePreview || "/images/default-user-image.png"}
-                        alt="Preview"
-                        className="object-cover rounded-md"
+                      <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        placeholder="New password"
+                        className={
+                          errors.password ? "border-red-500 pr-10" : "pr-10"
+                        }
                       />
                       <button
                         type="button"
-                        onClick={removeImage}
-                        className="absolute top-0 right-0 -mr-2 -mt-2 bg-red-500 text-white rounded-full p-1"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-500"
                       >
-                        <X className="h-4 w-4" />
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     </div>
-                  ) : (
-                    <div
-                      onClick={() => fileInputRef.current.click()}
-                      className="h-32 w-32 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center cursor-pointer bg-gray-50 hover:bg-gray-100"
-                    >
-                      <ImageIcon className="h-12 w-12 text-gray-400" />
-                    </div>
-                  )}
+                    {errors.password && (
+                      <p className="text-sm text-red-500">{errors.password}</p>
+                    )}
+                  </div>
 
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    id="image"
-                    name="image"
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    className="hidden"
-                  />
-
-                  {!imagePreview && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="ml-5"
-                      onClick={() => fileInputRef.current.click()}
-                    >
-                      Select Image
-                    </Button>
-                  )}
-                </div>
-                {errors.image && (
-                  <p className="text-sm text-red-500">{errors.image}</p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="due_date">
-                    Due Date <span className="text-red-500">*</span>
-                  </Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id="due_date"
-                        variant="outline"
-                        className={`w-full justify-start text-left font-normal ${
-                          !formData.due_date && "text-gray-400"
-                        } ${errors.due_date ? "border-red-500" : ""}`}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {formData.due_date ? (
-                          format(formData.due_date, "PPP")
-                        ) : (
-                          <span>Select a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={formData.due_date}
-                        onSelect={handleDateSelect}
-                        initialFocus
+                  <div className="space-y-2">
+                    <Label htmlFor="password_confirmation">
+                      Confirm New Password
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={formData.password_confirmation}
+                        onChange={handleInputChange}
+                        placeholder="Confirm new password"
+                        className={
+                          errors.password_confirmation
+                            ? "border-red-500 pr-10"
+                            : "pr-10"
+                        }
                       />
-                    </PopoverContent>
-                  </Popover>
-                  {errors.due_date && (
-                    <p className="text-sm text-red-500">{errors.due_date}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">
-                    Status <span className="text-red-500">*</span>
-                  </Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) =>
-                      handleSelectChange("status", value)
-                    }
-                  >
-                    <SelectTrigger
-                      id="status"
-                      className={errors.status ? "border-red-500" : ""}
-                    >
-                      <SelectValue placeholder="Select a status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="canceled">Canceled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.status && (
-                    <p className="text-sm text-red-500">{errors.status}</p>
-                  )}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-500"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                    {errors.password_confirmation && (
+                      <p className="text-sm text-red-500">
+                        {errors.password_confirmation}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
               <div className="flex justify-end space-x-3 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    router.get(route("user.index"));
-                  }}
+                <Link
+                  href={route("user.index")}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
                 >
                   Cancel
-                </Button>
+                </Link>
                 <Button type="submit" className="bg-blue-500 hover:bg-blue-600">
-                  Validate
+                  Update User
                 </Button>
               </div>
             </form>
