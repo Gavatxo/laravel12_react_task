@@ -47,7 +47,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Users/Create');
     }
 
     /**
@@ -55,7 +55,16 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        //
+        // Création d'un nouvel utilisateur
+        $data = $request->validated();
+
+        // Ajout des informations utilisateur
+        $data['created_by'] = Auth::id();
+
+        // Enregistrement de l'utilisateur
+        User::create($data);
+
+        return redirect()->route('user.index')->with('success', 'User created successfully.');
     }
 
     /**

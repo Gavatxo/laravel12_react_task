@@ -11,7 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon, Eye, EyeOff, X } from "lucide-react";
+
+const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 export default function Create() {
   const [formData, setFormData] = useState({
@@ -19,8 +22,8 @@ export default function Create() {
     email: "",
     password: "",
     password_confirmation: "",
-    role: "user", // Vous pouvez avoir différents rôles comme 'admin', 'user', etc.
-    image: null,
+    // role: "user", // Vous pouvez avoir différents rôles comme 'admin', 'user', etc.
+    // image: null,
   });
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
@@ -154,35 +157,64 @@ export default function Create() {
                   <Label htmlFor="password">
                     Password <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="Enter password"
-                    className={errors.password ? "border-red-500" : ""}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      placeholder="Enter password"
+                      className={errors.password ? "border-red-500" : ""}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-500"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                   {errors.password && (
                     <p className="text-sm text-red-500">{errors.password}</p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="password_confirmation">
                     Confirm Password <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="password_confirmation"
-                    name="password_confirmation"
-                    type="password"
-                    value={formData.password_confirmation}
-                    onChange={handleInputChange}
-                    placeholder="Confirm password"
-                    className={
-                      errors.password_confirmation ? "border-red-500" : ""
-                    }
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password_confirmation"
+                      name="password_confirmation"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.password_confirmation}
+                      onChange={handleInputChange}
+                      placeholder="Confirm password"
+                      className={
+                        errors.password_confirmation
+                          ? "border-red-500 pr-10"
+                          : "pr-10"
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-500"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                   {errors.password_confirmation && (
                     <p className="text-sm text-red-500">
                       {errors.password_confirmation}
@@ -191,7 +223,7 @@ export default function Create() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="role">
                   User Role <span className="text-red-500">*</span>
                 </Label>
@@ -214,9 +246,9 @@ export default function Create() {
                 {errors.role && (
                   <p className="text-sm text-red-500">{errors.role}</p>
                 )}
-              </div>
+              </div> */}
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="image">Profile Image</Label>
                 <div className="mt-1 flex items-center">
                   {imagePreview ? (
@@ -267,7 +299,7 @@ export default function Create() {
                 {errors.image && (
                   <p className="text-sm text-red-500">{errors.image}</p>
                 )}
-              </div>
+              </div> */}
 
               <div className="flex justify-end space-x-3 pt-4">
                 <Link
